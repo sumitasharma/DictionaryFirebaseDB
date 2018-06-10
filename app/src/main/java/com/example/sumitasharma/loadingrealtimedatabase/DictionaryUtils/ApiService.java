@@ -1,4 +1,4 @@
-package com.example.sumitasharma.loadingrealtimedatabase;
+package com.example.sumitasharma.loadingrealtimedatabase.DictionaryUtils;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

@@ -1,6 +1,9 @@
-package com.example.sumitasharma.loadingrealtimedatabase;
+package com.example.sumitasharma.loadingrealtimedatabase.DictionaryUtils;
+
+import com.example.sumitasharma.loadingrealtimedatabase.WordUtil;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -18,7 +21,6 @@ public class RetroClient {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
             public void log(String message) {
-                Timber.tag("OkHttp").i(message);
             }
         });
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
