@@ -5,20 +5,23 @@ import android.app.job.JobService;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.example.sumitasharma.loadingrealtimedatabase.DictionaryUtils.ApiService;
-import com.example.sumitasharma.loadingrealtimedatabase.DictionaryUtils.Dictionary;
 import com.example.sumitasharma.loadingrealtimedatabase.DictionaryUtils.Example;
 import com.example.sumitasharma.loadingrealtimedatabase.DictionaryUtils.RetroClient;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,8 +34,8 @@ class GetDataFromDictionary {
     private final JobService mJobService;
     private final JobParameters mJobParameters;
     private HashMap<String, String> words = new HashMap<>();
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mDatabaseReference;
+    //    private FirebaseDatabase mFirebaseDatabase;
+//    private DatabaseReference mDatabaseReference;
     private TextView mMeaningTextView;
 
     GetDataFromDictionary(WordDbPopulatorJobService wordDbPopulatorService, Context context, JobParameters jobParameters) {
@@ -47,7 +50,7 @@ class GetDataFromDictionary {
         //Creating an object of our api interface
         ApiService api = RetroClient.getApiService();
 
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // Calling JSON
 
@@ -61,17 +64,33 @@ class GetDataFromDictionary {
                 public void onResponse(Call<Example> call, Response<Example> response) {
                     if (response.isSuccessful()) {
                         Example example = response.body();
-                        List<String> definitions = example.getResults().get(0).getLexicalEntries().get(0).getEntries().get(0).getSenses().get(0).getDefinitions();
-                        String meaning = null;
-                        if (definitions != null) {
-                            for (String definition : definitions) {
-                                meaning = definition;
-                            }
-                            //   mMeaningTextView = findViewById(R.id.word_meaning);
+                        String meaning = example.getDefs().get(0);
+                        //   mMeaningTextView = findViewById(R.id.word_meaning);
+                        // Create a new user with a first and last name
+                        Map<String, String> dictionary = new HashMap<>();
+                        dictionary.put("word", word);
+                        dictionary.put("wordMeaning", meaning);
+                        dictionary.put("wordLevel", words.get(word));
 
-                            mDatabaseReference = mFirebaseDatabase.getReference().child("dictionary");
-                            Dictionary dictionary = new Dictionary(word, meaning);
-                            mDatabaseReference.push().setValue(dictionary);
+                        // Add a new document with a generated ID
+                        db.collection("dictionary")
+                                .add(dictionary)
+                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        Log.d("", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("", "Error adding document", e);
+                                    }
+                                });
+
+//                            mDatabaseReference = mFirebaseDatabase.getReference().child("dictionary");
+//                            Dictionary dictionary = new Dictionary(word, meaning);
+//                            mDatabaseReference.push().setValue(dictionary);
 //
 //                            // Create new empty ContentValues object
 //                            ContentValues contentValues = new ContentValues();
@@ -87,9 +106,6 @@ class GetDataFromDictionary {
 //                            // Insert the content values via a ContentResolver
 //
 //                            mContext.getContentResolver().insert(WordContract.WordsEntry.CONTENT_URI, contentValues);
-                        } else {
-                        }
-                    } else {
                     }
                     mJobService.jobFinished(mJobParameters, true);
                 }
@@ -101,6 +117,7 @@ class GetDataFromDictionary {
             });
 
         }
+
     }
 
     public void dataFromDictionary() {
