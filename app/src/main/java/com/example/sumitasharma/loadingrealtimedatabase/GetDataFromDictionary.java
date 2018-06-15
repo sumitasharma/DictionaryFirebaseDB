@@ -49,6 +49,7 @@ class GetDataFromDictionary {
 
         //Creating an object of our api interface
         ApiService api = RetroClient.getApiService();
+        Log.i("GetDataFromDictionary", "Inside populateDatabase");
 
         final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -56,6 +57,8 @@ class GetDataFromDictionary {
 
         for (final String word : words.keySet()) {
             Call<Example> call = api.getMyJSON(word);
+            Log.i("GetDataFromDictionary", "called api");
+
 
             // Enqueue Callback will be call when get response...
 
@@ -63,6 +66,8 @@ class GetDataFromDictionary {
                 @Override
                 public void onResponse(Call<Example> call, Response<Example> response) {
                     if (response.isSuccessful()) {
+                        Log.i("GetDataFromDictionary", "Got response");
+
                         Example example = response.body();
                         String meaning = example.getDefs().get(0);
                         //   mMeaningTextView = findViewById(R.id.word_meaning);

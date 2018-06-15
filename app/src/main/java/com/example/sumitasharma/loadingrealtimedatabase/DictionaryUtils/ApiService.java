@@ -2,7 +2,7 @@ package com.example.sumitasharma.loadingrealtimedatabase.DictionaryUtils;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiService {
 
@@ -12,5 +12,5 @@ public interface ApiService {
     */
     @GET("?sp={word_id}&md=d&max=1")
     // @Headers({"app_id: " + APP_ID, "app_key: " + API_KEY})
-    Call<Example> getMyJSON(@Path("word_id") String wordId);
+    Call<Example> getMyJSON(@Query("word_id") String wordId);
 }
