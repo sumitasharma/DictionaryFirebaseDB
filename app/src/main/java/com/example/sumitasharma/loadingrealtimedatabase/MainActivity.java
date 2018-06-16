@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         //Set job scheduling based on user preference
         ComponentName serviceComponent = new ComponentName(context, WordDbPopulatorJobService.class);
         JobInfo jobInfo = new JobInfo.Builder(1234, serviceComponent)
-                .setMinimumLatency(1 * 60 * 1000) // wait at least
+                .setMinimumLatency(5 * 60 * 1000) // wait at least
                 .setOverrideDeadline(2 * 60 * 1000) // maximum delay
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .build();
