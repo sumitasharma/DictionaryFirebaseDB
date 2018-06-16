@@ -3,7 +3,6 @@ package com.example.sumitasharma.loadingrealtimedatabase;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -21,13 +20,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static com.example.sumitasharma.loadingrealtimedatabase.WordUtil.LAST_SAVED_POSITION;
 
 class GetDataFromDictionary {
     private final Context mContext;
@@ -56,20 +54,29 @@ class GetDataFromDictionary {
         // Calling JSON
 
         for (final String word : words.keySet()) {
-            Call<Example> call = api.getMyJSON(word);
+            Call<List<Example>> call = api.getMyJSON(word);
             Log.i("GetDataFromDictionary", "called api");
 
 
             // Enqueue Callback will be call when get response...
 
-            call.enqueue(new Callback<Example>() {
+            call.enqueue(new Callback<List<Example>>() {
                 @Override
-                public void onResponse(Call<Example> call, Response<Example> response) {
+                public void onResponse(Call<List<Example>> call, Response<List<Example>> response) {
+                    String meaning;
                     if (response.isSuccessful()) {
-                        Log.i("GetDataFromDictionary", "Got response");
+                        Log.i("GetDataFromDictionary", "Got response" + response.body());
+                        try {
+                            List<Example> exampleList = response.body();
+                            Example example = exampleList.get(0);
+                            List<String> meanings = example.getDefs();
 
-                        Example example = response.body();
-                        String meaning = example.getDefs().get(0);
+
+                            meaning = meanings.get(0);
+                            meaning = meaning.split("\t", 2)[1];
+                        } catch (Exception e) {
+                            meaning = "No Data Retrieved";
+                        }
                         //   mMeaningTextView = findViewById(R.id.word_meaning);
                         // Create a new user with a first and last name
                         Map<String, String> dictionary = new HashMap<>();
@@ -111,13 +118,15 @@ class GetDataFromDictionary {
 //                            // Insert the content values via a ContentResolver
 //
 //                            mContext.getContentResolver().insert(WordContract.WordsEntry.CONTENT_URI, contentValues);
+                    } else {
+                        Log.w("", "Response not successful" + response);
                     }
                     mJobService.jobFinished(mJobParameters, true);
                 }
 
                 @Override
-                public void onFailure(Call<Example> call, Throwable t) {
-
+                public void onFailure(Call<List<Example>> call, Throwable t) {
+                    Log.w("GetDataFromDictionary", "Error getting response" + t);
                 }
             });
 
@@ -127,8 +136,8 @@ class GetDataFromDictionary {
 
     public void dataFromDictionary() {
         int last_saved_position;
-        SharedPreferences sharedPref = mContext.getSharedPreferences(LAST_SAVED_POSITION, Context.MODE_PRIVATE);
-        last_saved_position = sharedPref.getInt(LAST_SAVED_POSITION, 0);
+//        SharedPreferences sharedPref = mContext.getSharedPreferences(LAST_SAVED_POSITION, Context.MODE_PRIVATE);
+//        last_saved_position = sharedPref.getInt(LAST_SAVED_POSITION, 0);
         HashMap<String, String> words = new HashMap<>();
 
         AssetManager assetManager = mContext.getAssets();
@@ -142,9 +151,9 @@ class GetDataFromDictionary {
             // do reading, usually loop until end of file reading
             String mLine;
             // skipping till last_saved_position which we get from the shared preferences
-            for (int i = 0; i < last_saved_position; i++)
-                bufferedReader.readLine();
-            for (int i = 0; i < 10 && (mLine = bufferedReader.readLine()) != null; i++) {
+            //  for (int i = 0; i < last_saved_position; i++)
+            //     bufferedReader.readLine();
+            for (int i = 0; (mLine = bufferedReader.readLine()) != null; i++) {
 
                 words.put(mLine, "Easy");
             }
@@ -167,9 +176,9 @@ class GetDataFromDictionary {
             // do reading, usually loop until end of file reading
             String mLine;
             // skipping till last_saved_position which we get from the shared preferences
-            for (int i = 0; i < last_saved_position; i++)
-                bufferedReader.readLine();
-            for (int i = 0; i < 10 && (mLine = bufferedReader.readLine()) != null; i++) {
+            // for (int i = 0; i < last_saved_position; i++)
+            //   bufferedReader.readLine();
+            for (int i = 0; i < 100 && (mLine = bufferedReader.readLine()) != null; i++) {
                 words.put(mLine, "Moderate");
 
             }
@@ -193,16 +202,16 @@ class GetDataFromDictionary {
             // do reading, usually loop until end of file reading
             String mLine;
             // skipping till last_saved_position which we get from the shared preferences
-            for (int i = 0; i < last_saved_position; i++)
-                bufferedReader.readLine();
-            for (int i = 0; i < 10 && (mLine = bufferedReader.readLine()) != null; i++) {
+            //      for (int i = 0; i < last_saved_position; i++)
+            //        bufferedReader.readLine();
+            for (int i = 0; i < 100 && (mLine = bufferedReader.readLine()) != null; i++) {
 
                 words.put(mLine, "Difficult");
             }
-            sharedPref = mContext.getSharedPreferences(LAST_SAVED_POSITION, Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            editor.putInt(LAST_SAVED_POSITION, last_saved_position + 10);
-            editor.apply();
+//            sharedPref = mContext.getSharedPreferences(LAST_SAVED_POSITION, Context.MODE_PRIVATE);
+//            SharedPreferences.Editor editor = sharedPref.edit();
+//            editor.putInt(LAST_SAVED_POSITION, last_saved_position + 100);
+//            editor.apply();
         } catch (IOException e) {
             //log the exception
 
@@ -216,6 +225,10 @@ class GetDataFromDictionary {
                 }
             }
         }
+//        sharedPref = mContext.getSharedPreferences(LAST_SAVED_POSITION, Context.MODE_PRIVATE);
+//            SharedPreferences.Editor editor = sharedPref.edit();
+//            editor.putInt(LAST_SAVED_POSITION, last_saved_position + 100);
+//            editor.apply();
 
         populateDatabase(words, mContext);
     }
