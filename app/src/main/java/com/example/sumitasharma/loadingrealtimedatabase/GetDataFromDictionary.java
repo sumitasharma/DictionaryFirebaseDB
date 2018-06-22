@@ -62,9 +62,10 @@ class GetDataFromDictionary {
                 @Override
                 public void onResponse(Call<List<Example>> call, Response<List<Example>> response) {
                     String meaning;
-                    if (response.isSuccessful()) {
-                        Log.i("GetDataFromDictionary", "Got response" + response.body());
-                        try {
+                    try {
+                        if (response.isSuccessful()) {
+                            Log.i("GetDataFromDictionary", "Got response" + response.body());
+
                             List<Example> exampleList = response.body();
                             Example example = exampleList.get(0);
                             List<String> meanings = example.getDefs();
@@ -72,36 +73,37 @@ class GetDataFromDictionary {
 
                             meaning = meanings.get(0);
                             meaning = meaning.split("\t", 2)[1];
-                        } catch (Exception e) {
-                            meaning = "No Data Retrieved";
+
+                            //   mMeaningTextView = findViewById(R.id.word_meaning);
+                            // Create a new user with a first and last name
+                            Map<String, String> dictionary = new HashMap<>();
+                            dictionary.put("word", word);
+                            dictionary.put("wordMeaning", meaning);
+                            dictionary.put("wordLevel", words.get(word));
+
+                            // Add a new document with a generated ID
+                            db.collection("dictionary")
+                                    .add(dictionary)
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                        @Override
+                                        public void onSuccess(DocumentReference documentReference) {
+                                            Log.d("", "DocumentSnapshot added with ID: " + documentReference.getId());
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w("", "Error adding document", e);
+                                        }
+                                    });
+
+                        } else {
+                            Log.w("", "Response not successful" + response);
                         }
-                        //   mMeaningTextView = findViewById(R.id.word_meaning);
-                        // Create a new user with a first and last name
-                        Map<String, String> dictionary = new HashMap<>();
-                        dictionary.put("word", word);
-                        dictionary.put("wordMeaning", meaning);
-                        dictionary.put("wordLevel", words.get(word));
-
-                        // Add a new document with a generated ID
-                        db.collection("dictionary")
-                                .add(dictionary)
-                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                    @Override
-                                    public void onSuccess(DocumentReference documentReference) {
-                                        Log.d("", "DocumentSnapshot added with ID: " + documentReference.getId());
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("", "Error adding document", e);
-                                    }
-                                });
-
-                    } else {
-                        Log.w("", "Response not successful" + response);
+                        mJobService.jobFinished(mJobParameters, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    mJobService.jobFinished(mJobParameters, true);
                 }
 
                 @Override
