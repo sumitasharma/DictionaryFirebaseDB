@@ -3,7 +3,7 @@ package com.example.sumitasharma.loadingrealtimedatabase.DictionaryUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Metadata {
+class Metadata {
 
     @SerializedName("provider")
     @Expose

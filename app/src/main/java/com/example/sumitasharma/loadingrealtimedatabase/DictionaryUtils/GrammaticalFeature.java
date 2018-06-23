@@ -4,7 +4,7 @@ package com.example.sumitasharma.loadingrealtimedatabase.DictionaryUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class GrammaticalFeature {
+class GrammaticalFeature {
 
     @SerializedName("text")
     @Expose
