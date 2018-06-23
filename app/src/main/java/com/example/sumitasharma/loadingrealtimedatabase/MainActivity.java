@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                 .build();
         JobScheduler jobService = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        assert jobService != null;
         jobService.schedule(jobInfo);
+
     }
 }
