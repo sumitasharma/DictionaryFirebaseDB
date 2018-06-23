@@ -1,7 +1,7 @@
 package com.example.sumitasharma.loadingrealtimedatabase.DictionaryUtils;
 
 
-public class Dictionary {
+class Dictionary {
     private String word;
     private String wordMeaning;
 
