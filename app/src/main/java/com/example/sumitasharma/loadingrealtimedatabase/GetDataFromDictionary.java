@@ -29,19 +29,15 @@ import retrofit2.Response;
 
 class GetDataFromDictionary {
     private final Context mContext;
-    private final JobService mJobService;
-    private final JobParameters mJobParameters;
     private HashMap<String, String> words = new HashMap<>();
     private TextView mMeaningTextView;
 
-    GetDataFromDictionary(WordDbPopulatorJobService wordDbPopulatorService, Context context, JobParameters jobParameters) {
+    GetDataFromDictionary(Context context) {
         mContext = context;
-        mJobParameters = jobParameters;
-        mJobService = wordDbPopulatorService;
     }
 
 
-    private void populateDatabase(final HashMap<String, String> words, final Context context) {
+    private  void populateDatabase(final HashMap<String, String> words, final Context context) {
 
         //Creating an object of our api interface
         ApiService api = RetroClient.getApiService();
@@ -100,7 +96,7 @@ class GetDataFromDictionary {
                         } else {
                             Log.w("", "Response not successful" + response);
                         }
-                        mJobService.jobFinished(mJobParameters, true);
+                       // mJobService.jobFinished(mJobParameters, true);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -116,7 +112,7 @@ class GetDataFromDictionary {
 
     }
 
-    public void dataFromDictionary() {
+    public  void dataFromDictionary() {
         HashMap<String, String> words = new HashMap<>();
 
         AssetManager assetManager = mContext.getAssets();
@@ -151,7 +147,7 @@ class GetDataFromDictionary {
 
             // do reading, usually loop until end of file reading
             String mLine;
-            for (int i = 0; i < 100 && (mLine = bufferedReader.readLine()) != null; i++) {
+            for (int i = 0; (mLine = bufferedReader.readLine()) != null; i++) {
                 words.put(mLine, "Moderate");
 
             }
@@ -174,7 +170,7 @@ class GetDataFromDictionary {
 
             // do reading, usually loop until end of file reading
             String mLine;
-            for (int i = 0; i < 100 && (mLine = bufferedReader.readLine()) != null; i++) {
+            for (int i = 0; (mLine = bufferedReader.readLine()) != null; i++) {
 
                 words.put(mLine, "Difficult");
             }

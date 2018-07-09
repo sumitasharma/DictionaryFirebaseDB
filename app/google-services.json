@@ -8,6 +8,37 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:58225050326:android:8b5c85a4e62bfb02",
+        "android_client_info": {
+          "package_name": "com.example.sumitasharma.easyvocabulary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "58225050326-us2p5tshv8pu0ch9voao2o2v9t1oupop.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3JW5KJylKgSaAY6PoiH9tQPWmmS9dzLs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:58225050326:android:1c938abe05884174",
         "android_client_info": {
           "package_name": "com.example.sumitasharma.loadingrealtimedatabase"
@@ -21,10 +52,6 @@
             "package_name": "com.example.sumitasharma.loadingrealtimedatabase",
             "certificate_hash": "f0fe6d08ce90c949c8c5ccd05d4e26103470f8be"
           }
-        },
-        {
-          "client_id": "58225050326-us2p5tshv8pu0ch9voao2o2v9t1oupop.apps.googleusercontent.com",
-          "client_type": 3
         },
         {
           "client_id": "58225050326-us2p5tshv8pu0ch9voao2o2v9t1oupop.apps.googleusercontent.com",

@@ -7,7 +7,7 @@ import android.app.job.JobService;
 public class WordDbPopulatorJobService extends JobService {
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
-        new GetDataFromDictionary(this, this, jobParameters).dataFromDictionary();
+        //new GetDataFromDictionary(this, this, jobParameters).dataFromDictionary();
         return true;
     }
 
